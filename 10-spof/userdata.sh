@@ -3,11 +3,12 @@
 apt update
 apt install jq awscli openjdk-17-jdk -y
 
-git clone https://github.com/spring-projects/spring-petclinic
-cd spring-petclinic
-./mvnw -Dmaven.test.skip package
 
-FILE=$(ls /spring-petclinic/target/*.jar)
+mkdir  /app
+aws s3 cp s3://demo-artifacts-20657/spring-petclinic-3.1.0-SNAPSHOT.jar /app/
+
+
+FILE=$(ls /app/*.jar)
 
 REGION=$(curl --silent http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region)
 
@@ -32,4 +33,4 @@ java \
   -DMYSQL_USER=$MYSQL_USER \
   -DMYSQL_URL=$MYSQL_URL \
   -DMYSQL_PASS="$MYSQL_PASS" \
-  -jar target/spring-petclinic-3.0.0-SNAPSHOT.jar
+  -jar $FILE 
